@@ -22,21 +22,24 @@ function createScene() {
     // TODO: Dessiner les étoiles
 
     // TODO: Dessiner le soleil
-
+    draw_sun(0.09);
     // TODO: Dessiner l'orbite de la planète
-
+    scene.add(draw_orbit(0.2));
+    
     // Dessiner le système Terre-Lagrange
     // TODO: dessiner la planète
- 
+    scene.add(draw_earth(0.05));
+
     // TODO: Ajout d'une source de lumière directionnelle
 
     // TODO: Dessiner les points de Lagrange et l'orbite L2
+    scene.add(draw_orbit(2));
 
     // Créer une caméra
     camera = new THREE.PerspectiveCamera(45, canvas.width/canvas.height, 0.1, 100);
     camera.position.x = 2;
     camera.position.y = 2;
-    camera.position.z = 1;
+    camera.position.z = 1; //déplacer la caméra pour voir la scène position.z initial = 1
     camera.lookAt(0,0,0);
     scene.add(camera);
 
@@ -64,13 +67,23 @@ function draw_pyramid() {
     return pyramid
 }
 
-function draw_sun() {
+function draw_sun(radius) {
     // TODO: dessiner le soleil
+    const geometry = new THREE.SphereGeometry( radius, 32, 16 ); 
+    const material = new THREE.MeshBasicMaterial( { color: 0xffff00 } ); 
+    const sphere = new THREE.Mesh( geometry, material );
+    scene.add( sphere );
+
 }
 
-function draw_earth() {
+function draw_earth(radius) {
     let earth = null;
     // TODO: dessiner la planète
+    const geometry = new THREE.SphereGeometry( radius, 32, 16 ); 
+    const material = new THREE.MeshBasicMaterial( { color: 0x0000ff } ); 
+    earth = new THREE.Mesh( geometry, material );
+    earth.position.x = 0.2;
+    
     return earth
 }
 
@@ -78,9 +91,12 @@ function draw_stars() {
     // TODO: dessiner les étoiles
 }
 
-function draw_orbit(){
+function draw_orbit(radius){
     let orbit = null;
     // TODO: dessiner l'orbite de la planète
+    const geometry = new THREE.RingGeometry( radius, radius + 0.01, 100 ); 
+    const material = new THREE.MeshBasicMaterial( { color: 0xffff00, side: THREE.DoubleSide } );
+    orbit = new THREE.Mesh( geometry, material ); 
     return orbit
 }
 
