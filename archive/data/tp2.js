@@ -34,6 +34,7 @@ function createScene() {
 
     // TODO: Dessiner les points de Lagrange et l'orbite L2
     scene.add(draw_orbit(2));
+    scene.add(draw_pyramid())
 
     // Créer une caméra
     camera = new THREE.PerspectiveCamera(45, canvas.width/canvas.height, 0.1, 100);
@@ -57,6 +58,17 @@ function generate_randomStars() {
 
 function generate_pyramid_IFS(){
     let model = {}
+    let vertices = {
+        v1: [Math.SQRT(8/parseFloat(9)),0,-1/parseFloat(3)], 
+        v2: [- Math.sqrt(2/parseFloat(9)),Math.sqrt(2/parseFloat(3)),-1/parseFloat(3)], 
+        v3: [- Math.sqrt(2/parseFloat(9)),-Math.sqrt(2/parseFloat(3)),-1/parseFloat(3)], 
+        v4: [0,0,1]
+    }
+    let faces = {f1:[vertices.v1,vertices.v4,vertices.v3],
+                f2:[vertices.v2,vertices.v4,vertices.v1],
+                f3:[vertices.v3,vertices.v4,vertices.v2],
+                f4:[vertices.v1,vertices.v3,vertices.v2]} //under
+    
     // TODO: créer le modèle IFS de la pyramide
     return model
 }
@@ -64,6 +76,7 @@ function generate_pyramid_IFS(){
 function draw_pyramid() {
     let pyramid = null;
     // TODO: dessiner la pyramide
+
     return pyramid
 }
 
