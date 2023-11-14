@@ -56,20 +56,85 @@ function generate_randomStars() {
     // TODO: générer les positions des étoiles
 }
 
+/**
+ * Structure de données du système de fonctions itératives (IFS) qui génère des pyramides
+ * @returns {Object} model - un modèle IFS
+ */
 function generate_pyramid_IFS(){
-    let model = {}
+    let model = {};
+
+    // Définir les sommets de la pyramide
     let vertices = {
         v1: [Math.SQRT(8/parseFloat(9)),0,-1/parseFloat(3)], 
         v2: [- Math.sqrt(2/parseFloat(9)),Math.sqrt(2/parseFloat(3)),-1/parseFloat(3)], 
         v3: [- Math.sqrt(2/parseFloat(9)),-Math.sqrt(2/parseFloat(3)),-1/parseFloat(3)], 
         v4: [0,0,1]
     }
+
+    // Définir les points de Lagrange avec leurs propriétés
+    let lagrangePoints = {
+        L1: { theta: 0, radius: 0.7, color: 0xff0000 }, // Rouge
+        L2: { theta: 0, radius: 1.3, color: 0x00ff00 }, // Vert
+        L3: { theta: 180, radius: 1.0, color: 0x0000ff }, // Bleu
+        L4: { theta: 60, radius: 1.0, color: 0xffff00 }, // Jaune
+        L5: { theta: -60, radius: 1.0, color: 0x00ffff } // Cyan
+    };
+
+    // Créer un tableau pour stocker les faces des pyramides de Lagrange
+    let lagrangePyramidFaces = [];
+
+    // Générer une pyramide pour chaque point de Lagrange
+    for (let point in lagrangePoints) {
+        let lagrangePoint = lagrangePoints[point];
+        let lagrangeVertices = {
+            v1: [lagrangePoint.radius * Math.cos(THREE.Math.degToRad(lagrangePoint.theta)), 
+                 lagrangePoint.radius * Math.sin(THREE.Math.degToRad(lagrangePoint.theta)), 
+                 -1/3],
+            v2: [...vertices.v2],
+            v3: [...vertices.v3],
+            v4: [...vertices.v4]
+        };
+
+        let lagrangeFaces = {
+            f1: [lagrangeVertices.v1, lagrangeVertices.v4, lagrangeVertices.v3],
+            f2: [lagrangeVertices.v2, lagrangeVertices.v4, lagrangeVertices.v1],
+            f3: [lagrangeVertices.v3, lagrangeVertices.v4, lagrangeVertices.v2],
+            f4: [lagrangeVertices.v1, lagrangeVertices.v3, lagrangeVertices.v2]
+        };
+
+        lagrangePyramidFaces.push(lagrangeFaces);
+    }
+
+    // Calculer les faces de la pyramide, chaque face est un triangle
     let faces = {f1:[vertices.v1,vertices.v4,vertices.v3],
                 f2:[vertices.v2,vertices.v4,vertices.v1],
                 f3:[vertices.v3,vertices.v4,vertices.v2],
                 f4:[vertices.v1,vertices.v3,vertices.v2]} //under
     
-    // TODO: créer le modèle IFS de la pyramide
+    // todo: créer le modèle IFS de la pyramide
+    // Calculer les vecteurs normaux aux faces
+    let compute_normal = function(a,b,c){
+        let v1 = new THREE.Vector3(a[0],a[1],a[2]);
+        let v2 = new THREE.Vector3(b[0],b[1],b[2]);
+        let v3 = new THREE.Vector3(c[0],c[1],c[2]);
+        let v1v2 = new THREE.Vector3().subVectors(v2,v1);
+        let v1v3 = new THREE.Vector3().subVectors(v3,v1);
+        let normal = new THREE.Vector3().crossVectors(v1v2,v1v3);
+        normal.normalize();
+        return normal.toArray();
+    }
+
+    // Calculer les vecteurs normaux aux faces et les ajouter à l'objet normals
+    let normal = {
+        n1: compute_normal(faces.f1[0],faces.f1[1],faces.f1[2]),
+        n2: compute_normal(faces.f2[0],faces.f2[1],faces.f2[2]),
+        n3: compute_normal(faces.f3[0],faces.f3[1],faces.f3[2]),
+        n4: compute_normal(faces.f4[0],faces.f4[1],faces.f4[2])
+    };
+
+    // Ajouter les sommets, les faces et les normales à l'objet model
+    model = {vertices:vertices,faces:faces,normals:normal};
+
     return model
 }
 
@@ -83,9 +148,9 @@ function draw_pyramid() {
 function draw_sun(radius) {
     // TODO: dessiner le soleil
     const geometry = new THREE.SphereGeometry( radius, 32, 16 ); 
-    const material = new THREE.MeshBasicMaterial( { color: 0xffff00 } ); 
-    const sphere = new THREE.Mesh( geometry, material );
-    scene.add( sphere );
+    const material = new THREE.MeshBasicMaterial( { color: 0xffa500, emissive: 0xffff00 } ); 
+    const sun = new THREE.Mesh( geometry, material );
+    scene.add( sun );
 
 }
 
@@ -93,10 +158,11 @@ function draw_earth(radius) {
     let earth = null;
     // TODO: dessiner la planète
     const geometry = new THREE.SphereGeometry( radius, 32, 16 ); 
-    const material = new THREE.MeshBasicMaterial( { color: 0x0000ff } ); 
+    const material = new THREE.MeshBasicMaterial( { color: 0xffffff, specular: 0x000000} ); 
     earth = new THREE.Mesh( geometry, material );
-    earth.position.x = 0.2;
-    
+    earth.position.x = 1;
+    scene.add( earth );
+
     return earth
 }
 
