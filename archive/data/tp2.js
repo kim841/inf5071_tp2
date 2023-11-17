@@ -2,6 +2,7 @@
 import * as THREE from 'three';
 import { ArcballControls } from 'three/addons/controls/ArcballControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js';
 
 let scene, camera, renderer;  // Bases pour le rendu Three.js
 let controls; // Pour l'interaction avec la souris
@@ -34,7 +35,8 @@ function createScene() {
 
     // TODO: Dessiner les points de Lagrange et l'orbite L2
     scene.add(draw_orbit(2));
-    scene.add(draw_pyramid())
+    generate_pyramid_IFS();
+    // scene.add(draw_pyramid())
 
     // Créer une caméra
     camera = new THREE.PerspectiveCamera(45, canvas.width/canvas.height, 0.1, 100);
@@ -58,16 +60,40 @@ function generate_randomStars() {
 
 function generate_pyramid_IFS(){
     let model = {}
-    let vertices = {
-        v1: [Math.SQRT(8/parseFloat(9)),0,-1/parseFloat(3)], 
-        v2: [- Math.sqrt(2/parseFloat(9)),Math.sqrt(2/parseFloat(3)),-1/parseFloat(3)], 
-        v3: [- Math.sqrt(2/parseFloat(9)),-Math.sqrt(2/parseFloat(3)),-1/parseFloat(3)], 
-        v4: [0,0,1]
-    }
-    let faces = {f1:[vertices.v1,vertices.v4,vertices.v3],
-                f2:[vertices.v2,vertices.v4,vertices.v1],
-                f3:[vertices.v3,vertices.v4,vertices.v2],
-                f4:[vertices.v1,vertices.v3,vertices.v2]} //under
+    // let vertices = {
+    //     v1: [Math.SQRT(8/parseFloat(9)),0,-1/parseFloat(3)], 
+    //     v2: [- Math.sqrt(2/parseFloat(9)),Math.sqrt(2/parseFloat(3)),-1/parseFloat(3)], 
+    //     v3: [- Math.sqrt(2/parseFloat(9)),-Math.sqrt(2/parseFloat(3)),-1/parseFloat(3)], 
+    //     v4: [0,0,1]
+    // }
+    let vertices = new Float32Array([
+        Math.sqrt(8/parseFloat(9)),0,-1/parseFloat(3),  
+        - Math.sqrt(2/parseFloat(9)),Math.sqrt(2/parseFloat(3)),-1/parseFloat(3),
+        - Math.sqrt(2/parseFloat(9)),-Math.sqrt(2/parseFloat(3)),-1/parseFloat(3),
+        0,0,1,
+    ]);
+    let indicesOfFaces = [
+        0,3,2,  1,3,0,  2,3,1,  0,2,1
+    ];
+
+    const geometry = new THREE.BufferGeometry();
+    geometry.setIndex( indicesOfFaces );
+    geometry.setAttribute( 'position', new THREE.BufferAttribute( vertices, 3 ) );
+    const material = new THREE.MeshBasicMaterial( { color: 0xff0000 } );
+    const mesh = new THREE.Mesh( geometry, material );
+
+    geometry.computeVertexNormals();
+    const helper = new VertexNormalsHelper( mesh, 1, 0xff0000 );
+
+    scene.add( mesh );
+    scene.add( helper );
+
+    model = {vertices, indicesOfFaces}
+   
+    // let faces = {f1:[vertices.v1,vertices.v4,vertices.v3],
+    //             f2:[vertices.v2,vertices.v4,vertices.v1],
+    //             f3:[vertices.v3,vertices.v4,vertices.v2],
+    //             f4:[vertices.v1,vertices.v3,vertices.v2]} //under
     
     // TODO: créer le modèle IFS de la pyramide
     return model
@@ -76,7 +102,14 @@ function generate_pyramid_IFS(){
 function draw_pyramid() {
     let pyramid = null;
     // TODO: dessiner la pyramide
+    let pyramidIFS = generate_pyramid_IFS();
+    const geometry = new THREE.PolyhedronGeometry( pyramidIFS.vertices, pyramidIFS.indicesOfFaces, 0.1, 1 );
+    // const geometry = new THREE.BufferGeometry( pyramidIFS.vertices, pyramidIFS.indicesOfFaces, 0.1, 1 );
 
+    // const geometry = new THREE.TetrahedronGeometry( pyramidIFS.vertices, pyramidIFS.indicesOfFaces, 1, 1 );
+    const material = new THREE.MeshBasicMaterial( { color: 0xff0000 } );
+    pyramid = new THREE.Mesh( geometry, material );
+    pyramid.position.x = 1;
     return pyramid
 }
 
