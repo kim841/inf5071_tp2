@@ -22,7 +22,7 @@ const color = {
     vertFonce: 0x006400,
 }
 let L1, L2, L3, L4, L5; //Points de lagrange
-let orbitSatteliteJamesWebb;
+let orbitSatteliteJamesWebb, earth, sun;
 
 const planetRadius = {
     earth: 0.05,
@@ -47,20 +47,24 @@ function createScene() {
     // TODO: Dessiner les étoiles
 
     // TODO: Dessiner le soleil
-    draw_sun(planetRadius.sun);
+    sun = draw_sun(planetRadius.sun);
+    scene.add(sun);
 
     // // TODO: Dessiner l'orbite de la planète
     scene.add(draw_orbit(orbitRadius.earthAroundSun, color.blanc));
     
     // Dessiner le système Terre-Lagrange
     // TODO: dessiner la planète
-    scene.add(draw_earth(planetRadius.earth));
-    L2 = draw_laGrange(color.vert, 0, {x:1.5, y:0, z:0});
-    L2 = draw_laGrange(color.vert, 1.3, {x:1.5, y:0, z:0});
+    earth = draw_earth(planetRadius.earth);
+    scene.add(earth);
+    
+    // scene.add(draw_earth(planetRadius.earth));
+    const coordL2 = cartisianCoordinates(0.5, degresToRadians(0), {x:1, y:0, z:0})
+    L2 = draw_laGrange(color.vert, 0.1, {x:coordL2.x, y:coordL2.y, z:coordL2.z});
     scene.add(L2);
-
+    
     orbitSatteliteJamesWebb = draw_orbit((1/8.0)*orbitRadius.earthAroundSun, color.vertFonce);
-    orbitSatteliteJamesWebb.position.set(1,0,0);
+    orbitSatteliteJamesWebb.position.set(1.5,0,0);
     scene.add(orbitSatteliteJamesWebb);
 
     // TODO: Ajout d'une source de lumière directionnelle
@@ -72,18 +76,31 @@ function createScene() {
 
     // TODO: Dessiner les points de Lagrange et l'orbite L2
     scene.add(draw_orbit(orbitRadius.othersAroundSun, color.blanc));
-
-    L1 = draw_laGrange(color.rouge, 0.7, {x:0.5, y:0, z:0});
+    const coordL1 = cartisianCoordinates(-0.5, degresToRadians(0), {x:1, y:0, z:0})
+    L1 = draw_laGrange(color.rouge, 0.7, {x:coordL1.x, y:coordL1.y, z:coordL1.z});
     scene.add(L1);
+    
 
-    L3 = draw_laGrange(color.bleu, 1, {x: -1, y:0, z:0});
+    const coordL3 = cartisianCoordinates(2, degresToRadians(180), {x:1, y:0, z:0})
+    L3 = draw_laGrange(color.bleu, 1, {x: coordL3.x, y:coordL3.y, z:coordL3.z});
     scene.add(L3);
 
-    L4 = draw_laGrange(color.jaune, 0.7, {x: 0.75, y:1, z:0});
+    const coordL4 = cartisianCoordinates(1, degresToRadians(60), {x:0, y:0, z:0})
+    L4 = draw_laGrange(color.jaune, 0.7, {x: coordL4.x, y:coordL4.y, z:coordL4.z});
     scene.add(L4);
 
-    L5 = draw_laGrange(color.cyan, 0.7, {x:0.75, y:-1, z:0});
+    const coordL5 = cartisianCoordinates(1, degresToRadians(-60), {x:0, y:0, z:0})
+    L5 = draw_laGrange(color.cyan, 0.7, {x:coordL5.x, y:coordL5.y, z:coordL5.z});
     scene.add(L5);
+
+
+    sun.add(L2);
+    sun.add(orbitSatteliteJamesWebb);
+    sun.add(earth);
+    sun.add(L1);
+    sun.add(L3);
+    sun.add(L4);
+    sun.add(L5);
 
     // Créer une caméra
     camera = new THREE.PerspectiveCamera(45, canvas.width/canvas.height, 0.1, 100);
@@ -155,6 +172,7 @@ function draw_sun(radius) {
     const material = new THREE.MeshBasicMaterial( { color: color.orange } ); 
     const sphere = new THREE.Mesh( geometry, material );
     scene.add( sphere );
+    return sphere;
 
 }
 
@@ -206,9 +224,13 @@ function animate() {
     // Contrôle de l'animation
     let run_animation = document.getElementById("toggleAnimation");
     if (run_animation.checked) {
-        // TODO: animer la scène
+        earth.rotation.z += 0.01;
+        // L2.rotation.z += 0.01;
 
-    }   
+        // sun.rotation.z += 0.01;
+        // TODO: animer la scène
+    }
+    
     last_render = Date.now();
     requestAnimationFrame(animate);
     renderer.render(scene, camera);
@@ -217,6 +239,13 @@ function animate() {
 
 function degresToRadians(angle) {
     return angle * (Math.PI / 180.0);
+}
+//https://stackoverflow.com/questions/2912779/how-to-calculate-a-point-with-an-given-center-angle-and-radius
+function cartisianCoordinates(radius, angle, points){
+    var x = points.x + radius * Math.cos(angle);
+    var y = points.y + radius * Math.sin(angle);
+
+    return {x:x, y:y, z:0};
 }
 
 function init() {
@@ -236,7 +265,7 @@ function init() {
     //pyramidIFS = generate_pyramid_IFS(); // TODO (a): Décommenter cette ligne
     
     // TODO (a): calcul des positions des points de Lagrange
-
+    //voir degresToRadians(angle) et cartisianCoordinates(radius, angle, points)
 
     // TODO: Importation des textures
 
