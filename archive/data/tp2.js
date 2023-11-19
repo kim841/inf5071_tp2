@@ -79,6 +79,11 @@ function createScene() {
     const loaderSatellite = new GLTFLoader();
     loaderSatellite.load('tp2_satellite.glb', function (gltf) {
         const satellite = gltf.scene;
+        // satellite.traverse(child => {
+        //     if (child.isMesh) {
+        //       child.material = new THREE.MeshLambertMaterial({ color: color.bleu });
+        //     }
+        //   });
         satellite.scale.set(0.02,0.02,0.02);
         satellite.position.set(orbitPoint.x, orbitPoint.y, orbitPoint.z);
         
