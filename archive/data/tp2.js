@@ -223,11 +223,8 @@ function animate() {
     // Contrôle de l'animation
     let run_animation = document.getElementById("toggleAnimation");
     if (run_animation.checked) {
-        earth.rotation.z += 0.01;
-        // L2.rotation.z += 0.01;
-
-        // sun.rotation.z += 0.01;
         // TODO: animer la scène
+        sun.rotation.z += 0.01;
     }
     
     last_render = Date.now();
