@@ -77,20 +77,19 @@ function createScene() {
     // TODO: Dessiner les points de Lagrange et l'orbite L2
     scene.add(draw_orbit(orbitRadius.othersAroundSun, color.blanc));
     const coordL1 = cartisianCoordinates(-0.5, degresToRadians(0), {x:1, y:0, z:0})
-    L1 = draw_laGrange(color.rouge, 0.7, {x:coordL1.x, y:coordL1.y, z:coordL1.z});
+    L1 = draw_laGrange(color.rouge, 0.1, {x:coordL1.x, y:coordL1.y, z:coordL1.z});
     scene.add(L1);
     
-
     const coordL3 = cartisianCoordinates(2, degresToRadians(180), {x:1, y:0, z:0})
-    L3 = draw_laGrange(color.bleu, 1, {x: coordL3.x, y:coordL3.y, z:coordL3.z});
+    L3 = draw_laGrange(color.bleu, 0.1, {x: coordL3.x, y:coordL3.y, z:coordL3.z});
     scene.add(L3);
 
     const coordL4 = cartisianCoordinates(1, degresToRadians(60), {x:0, y:0, z:0})
-    L4 = draw_laGrange(color.jaune, 0.7, {x: coordL4.x, y:coordL4.y, z:coordL4.z});
+    L4 = draw_laGrange(color.jaune, 0.1, {x: coordL4.x, y:coordL4.y, z:coordL4.z});
     scene.add(L4);
 
     const coordL5 = cartisianCoordinates(1, degresToRadians(-60), {x:0, y:0, z:0})
-    L5 = draw_laGrange(color.cyan, 0.7, {x:coordL5.x, y:coordL5.y, z:coordL5.z});
+    L5 = draw_laGrange(color.cyan, 0.1, {x:coordL5.x, y:coordL5.y, z:coordL5.z});
     scene.add(L5);
 
 
