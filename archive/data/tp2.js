@@ -67,6 +67,24 @@ function createScene() {
     orbitSatteliteJamesWebb.position.set(1.5,0,0);
     scene.add(orbitSatteliteJamesWebb);
 
+    const theta = Math.random() * 2 * Math.PI;
+    const orbitPoint = calculateOrbitPoint((1/8.0) * orbitRadius.earthAroundSun, theta);
+    
+    // https://threejs.org/docs/#examples/en/loaders/GLTFLoader
+    
+    const loaderSatellite = new GLTFLoader();
+    loaderSatellite.load('tp2_satellite.glb', function (gltf) {
+        const satellite = gltf.scene;
+        satellite.scale.set(0.02,0.02,0.02);
+        satellite.position.set(orbitPoint.x, orbitPoint.y, orbitPoint.z);
+        
+
+        orbitSatteliteJamesWebb.add(satellite);
+
+    }, undefined, function (error) {
+        console.error(error);
+    });
+
     // TODO: Ajout d'une source de lumière directionnelle
     var light = new THREE.DirectionalLight(0xFFFFFF)
     light.position.set(1, 0, 0)
@@ -212,6 +230,10 @@ function draw_orbit(radius, color){
 }
 
 function animate() {
+    //let textureTranslation = 0; // Translation tx des coordonnées de texture pour simuler la rotation de la Terre autour de son axe.
+    //let orbitAngle1 = 0; // Angle de rotation θ1 pour simuler l’orbite du satellite autour du point de Lagrange L2
+    //let orbitAngle2 = 0; // Angle de rotation θ2 pour simuler l’orbite de la Terre, des points de Lagrange et du satellite autour du soleil.
+
     // Ajout d'une lumière de point de vue
     let camera_light_intensity = document.getElementById("toggleViewlight").checked;
     if (camera_light_intensity) {
@@ -236,6 +258,13 @@ function animate() {
     let run_animation = document.getElementById("toggleAnimation");
     if (run_animation.checked) {
         // TODO: animer la scène
+        //textureTranslation += 0.001;
+        //orbitAngle1 += 0.01;
+        //orbitAngle2 += 0.005;
+
+        earth.rotation.z += 0.01; 
+        earth.rotation.x += 0.01;  
+        orbitSatteliteJamesWebb.rotation.z  += 0.03;     
         sun.rotation.z += 0.01;
     }
     
@@ -254,6 +283,13 @@ function cartisianCoordinates(radius, angle, points){
     var y = points.y + radius * Math.sin(angle);
 
     return {x:x, y:y, z:0};
+}
+
+function calculateOrbitPoint(radius, theta) {
+    const x = radius * Math.cos(theta);
+    const y = radius * Math.sin(theta);
+    const z = 0;  
+    return { x, y, z };
 }
 
 function init() {
@@ -286,31 +322,6 @@ function init() {
     // TODO: Importation des textures
 
     // TODO: Importer le satellite
-    function calculateOrbitPoint(radius, theta) {
-        const x = radius * Math.cos(theta);
-        const y = radius * Math.sin(theta);
-        const z = 0;  
-        return { x, y, z };
-    }
-
-    const theta = Math.random() * 2 * Math.PI;
-    const orbitPoint = calculateOrbitPoint((1/8.0) * orbitRadius.earthAroundSun, theta);
-
-    orbitSatteliteJamesWebb = draw_orbit((1/8.0)*orbitRadius.earthAroundSun, color.vertFonce);
-    
-    // https://threejs.org/docs/#examples/en/loaders/GLTFLoader
-    
-    const loaderSatellite = new GLTFLoader();
-    loaderSatellite.load('tp2_satellite.glb', function (gltf) {
-        const satellite = gltf.scene;
-        satellite.scale.set(0.02,0.02,0.02);
-        satellite.position.set(orbitPoint.x, orbitPoint.y, orbitPoint.z);
-
-        orbitSatteliteJamesWebb.add(satellite);
-
-    }, undefined, function (error) {
-        console.error(error);
-    });
     
     // Création de la scène 3D
     createScene();
