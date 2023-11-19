@@ -22,7 +22,7 @@ const color = {
     vertFonce: 0x006400,
 }
 let L1, L2, L3, L4, L5; //Points de lagrange
-let orbitSatteliteJamesWebb, earth, sun;
+let orbitSatteliteJamesWebb, earth, sun, stars;
 let directionalLight
 
 const planetRadius = {
@@ -46,6 +46,10 @@ function createScene() {
     scene.background = new THREE.Color(0,0,0);
 
     // TODO: Dessiner les étoiles
+    const stars = draw_stars();
+    for (let i = 0; i < stars.length; i++) {
+        scene.add(stars[i]);
+    }
 
     // TODO: Dessiner le soleil
     sun = draw_sun(planetRadius.sun);
@@ -136,8 +140,36 @@ function createScene() {
 
 }
 
-function generate_randomStars() {
+function sphericalCoordinates(radius, polarAngle, azimuthalAngle) {
+    const x = radius * Math.sin(polarAngle) * Math.cos(azimuthalAngle);
+    const y = radius * Math.sin(polarAngle) * Math.sin(azimuthalAngle);
+    const z = radius * Math.cos(polarAngle);
+
+    return { x, y, z };
+}
+
+function generate_randomStars(numStars, starTexture) {
     // TODO: générer les positions des étoiles
+    const stars = [];
+
+    for (let i = 0; i < numStars; i++) {
+        const radius = Math.random() * (2 - 1) + 1;
+        const polarAngle = Math.random() * Math.PI; 
+        const azimuthalAngle = Math.random() * 2 * Math.PI; 
+
+        const coord = sphericalCoordinates(radius, polarAngle, azimuthalAngle);
+
+        const starSize = Math.random() * 0.2 + 0.1; 
+
+        const starGeometry = new THREE.DodecahedronGeometry(starSize/8);
+        const starMaterial = new THREE.MeshBasicMaterial({ map: starTexture, transparent: true });
+        const star = new THREE.Mesh(starGeometry, starMaterial);
+
+        star.position.set(coord.x, coord.y, coord.z);
+        stars.push(star);
+    }
+
+    return stars;
 }
 
 /**
@@ -214,7 +246,17 @@ function draw_earth(radius) {
 }
 
 function draw_stars() {
-    // TODO: dessiner les étoiles
+    let stars = [];
+
+    const textureLoader = new THREE.TextureLoader();
+    const starTexture = textureLoader.load('tp2_etoile.png');
+
+    starTexture.minFilter = THREE.LinearFilter;
+
+    const nbStars = Math.floor(Math.random() * 100) + 1;
+    stars = generate_randomStars(nbStars, starTexture);
+
+    return stars
 }
 
 function draw_orbit(radius, color){
@@ -294,13 +336,6 @@ function init() {
         canvas = document.getElementById("canvas");
         renderer = new THREE.WebGLRenderer({canvas: canvas, antialias: true});
         renderer.setSize( canvas.clientWidth, canvas.clientHeight );
-
-        const textureLoader = new THREE.TextureLoader();
-        const texture = textureLoader.load( 'tp2_texture_planete.jpg' );
-
-        texture.minFilter = THREE.LinearFilter;
-
-        const material = new THREE.MeshBasicMaterial( { map: texture } );
 
     }
     catch (e) {
