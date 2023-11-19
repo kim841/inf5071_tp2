@@ -23,6 +23,7 @@ const color = {
 }
 let L1, L2, L3, L4, L5; //Points de lagrange
 let orbitSatteliteJamesWebb, earth, sun;
+let directionalLight
 
 const planetRadius = {
     earth: 0.05,
@@ -85,11 +86,11 @@ function createScene() {
     });
 
     // TODO: Ajout d'une source de lumière directionnelle
-    var light = new THREE.DirectionalLight(0xFFFFFF)
-    light.position.set(1, 0, 0)
-    // const helper = new THREE.DirectionalLightHelper( light, 5 );
+    directionalLight = new THREE.DirectionalLight(0xFFFFFF)
+    directionalLight.position.set(1, 0, 0)
+    // const helper = new THREE.DirectionalLightHelper( directionalLight, 5 );
     // scene.add( helper );
-    scene.add(light)
+    scene.add(directionalLight)
 
     // TODO: Dessiner les points de Lagrange et l'orbite L2
     scene.add(draw_orbit(orbitRadius.othersAroundSun, color.blanc));
@@ -117,6 +118,7 @@ function createScene() {
     sun.add(L3);
     sun.add(L4);
     sun.add(L5);
+    sun.add(directionalLight);
 
     // Créer une caméra
     camera = new THREE.PerspectiveCamera(45, canvas.width/canvas.height, 0.1, 100);
@@ -204,9 +206,8 @@ function draw_earth(radius) {
 
     texture.minFilter = THREE.LinearFilter;
     
-    const material = new THREE.MeshBasicMaterial( { map: texture, specular: 0x000000} ); 
-
-    // const material = new THREE.MeshLambertMaterial( { color: color.blanc } ); 
+    const material = new THREE.MeshLambertMaterial( { map: texture} );
+    
     earth = new THREE.Mesh( geometry, material );
     earth.position.x = 1;
     return earth
@@ -258,10 +259,10 @@ function animate() {
         // orbitAngle1 += 0.01;
         // orbitAngle2 += 0.005;
 
-        earth.rotation.z += 0.001; 
-        earth.rotation.x += 0.001;  
-        orbitSatteliteJamesWebb.rotation.z  += 0.003;     
-        sun.rotation.z += 0.001;
+        // earth.rotation.z += 0.001; 
+        // earth.rotation.x += 0.001;  
+        // orbitSatteliteJamesWebb.rotation.z  += 0.003;     
+        // sun.rotation.z += 0.001;
     }
     
     last_render = Date.now();
