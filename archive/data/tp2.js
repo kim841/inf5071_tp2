@@ -126,79 +126,6 @@ function generate_randomStars() {
  * @returns {Object} model - un modèle IFS
  */
 function generate_pyramid_IFS(){
-    // let model = {};
-
-    // // Définir les sommets de la pyramide
-    // let vertices = {
-    //     v1: [Math.SQRT(8/parseFloat(9)),0,-1/parseFloat(3)], 
-    //     v2: [- Math.sqrt(2/parseFloat(9)),Math.sqrt(2/parseFloat(3)),-1/parseFloat(3)], 
-    //     v3: [- Math.sqrt(2/parseFloat(9)),-Math.sqrt(2/parseFloat(3)),-1/parseFloat(3)], 
-    //     v4: [0,0,1]
-    // }
-
-    // // Définir les points de Lagrange avec leurs propriétés
-    // let lagrangePoints = {
-    //     L1: { theta: 0, radius: 0.7, color: 0xff0000 }, // Rouge
-    //     L2: { theta: 0, radius: 1.3, color: 0x00ff00 }, // Vert
-    //     L3: { theta: 180, radius: 1.0, color: 0x0000ff }, // Bleu
-    //     L4: { theta: 60, radius: 1.0, color: 0xffff00 }, // Jaune
-    //     L5: { theta: -60, radius: 1.0, color: 0x00ffff } // Cyan
-    // };
-
-    // // Créer un tableau pour stocker les faces des pyramides de Lagrange
-    // let lagrangePyramidFaces = [];
-
-    // // Générer une pyramide pour chaque point de Lagrange
-    // for (let point in lagrangePoints) {
-    //     let lagrangePoint = lagrangePoints[point];
-    //     let lagrangeVertices = {
-    //         v1: [lagrangePoint.radius * Math.cos(THREE.Math.degToRad(lagrangePoint.theta)), 
-    //              lagrangePoint.radius * Math.sin(THREE.Math.degToRad(lagrangePoint.theta)), 
-    //              -1/3],
-    //         v2: [...vertices.v2],
-    //         v3: [...vertices.v3],
-    //         v4: [...vertices.v4]
-    //     };
-
-    //     let lagrangeFaces = {
-    //         f1: [lagrangeVertices.v1, lagrangeVertices.v4, lagrangeVertices.v3],
-    //         f2: [lagrangeVertices.v2, lagrangeVertices.v4, lagrangeVertices.v1],
-    //         f3: [lagrangeVertices.v3, lagrangeVertices.v4, lagrangeVertices.v2],
-    //         f4: [lagrangeVertices.v1, lagrangeVertices.v3, lagrangeVertices.v2]
-    //     };
-
-    //     lagrangePyramidFaces.push(lagrangeFaces);
-    // }
-
-    // // Calculer les faces de la pyramide, chaque face est un triangle
-    // let faces = {f1:[vertices.v1,vertices.v4,vertices.v3],
-    //             f2:[vertices.v2,vertices.v4,vertices.v1],
-    //             f3:[vertices.v3,vertices.v4,vertices.v2],
-    //             f4:[vertices.v1,vertices.v3,vertices.v2]} //under
-    
-    // // todo: créer le modèle IFS de la pyramide
-    // // Calculer les vecteurs normaux aux faces
-    // let compute_normal = function(a,b,c){
-    //     let v1 = new THREE.Vector3(a[0],a[1],a[2]);
-    //     let v2 = new THREE.Vector3(b[0],b[1],b[2]);
-    //     let v3 = new THREE.Vector3(c[0],c[1],c[2]);
-    //     let v1v2 = new THREE.Vector3().subVectors(v2,v1);
-    //     let v1v3 = new THREE.Vector3().subVectors(v3,v1);
-    //     let normal = new THREE.Vector3().crossVectors(v1v2,v1v3);
-    //     normal.normalize();
-    //     return normal.toArray();
-    // }
-
-    // // Calculer les vecteurs normaux aux faces et les ajouter à l'objet normals
-    // let normal = {
-    //     n1: compute_normal(faces.f1[0],faces.f1[1],faces.f1[2]),
-    //     n2: compute_normal(faces.f2[0],faces.f2[1],faces.f2[2]),
-    //     n3: compute_normal(faces.f3[0],faces.f3[1],faces.f3[2]),
-    //     n4: compute_normal(faces.f4[0],faces.f4[1],faces.f4[2])
-    // };
-
-    // // Ajouter les sommets, les faces et les normales à l'objet model
-    // model = {vertices:vertices,faces:faces,normals:normal};
 
     let model = {}
 
@@ -341,6 +268,7 @@ function init() {
         texture.minFilter = THREE.LinearFilter;
 
         const material = new THREE.MeshBasicMaterial( { map: texture } );
+
     }
     catch (e) {
         document.getElementById("canvas-holder").innerHTML="<p><b>Sorry, an error occurred:<br>" +
@@ -358,6 +286,31 @@ function init() {
     // TODO: Importation des textures
 
     // TODO: Importer le satellite
+    function calculateOrbitPoint(radius, theta) {
+        const x = radius * Math.cos(theta);
+        const y = radius * Math.sin(theta);
+        const z = 0;  
+        return { x, y, z };
+    }
+
+    const theta = Math.random() * 2 * Math.PI;
+    const orbitPoint = calculateOrbitPoint((1/8.0) * orbitRadius.earthAroundSun, theta);
+
+    orbitSatteliteJamesWebb = draw_orbit((1/8.0)*orbitRadius.earthAroundSun, color.vertFonce);
+    
+    // https://threejs.org/docs/#examples/en/loaders/GLTFLoader
+    
+    const loaderSatellite = new GLTFLoader();
+    loaderSatellite.load('tp2_satellite.glb', function (gltf) {
+        const satellite = gltf.scene;
+        satellite.scale.set(0.02,0.02,0.02);
+        satellite.position.set(orbitPoint.x, orbitPoint.y, orbitPoint.z);
+
+        orbitSatteliteJamesWebb.add(satellite);
+
+    }, undefined, function (error) {
+        console.error(error);
+    });
     
     // Création de la scène 3D
     createScene();
