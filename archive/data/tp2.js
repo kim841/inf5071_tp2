@@ -158,7 +158,14 @@ function draw_earth(radius) {
     let earth = null;
     // TODO: dessiner la planète
     const geometry = new THREE.SphereGeometry( radius, 32, 16 ); 
-    const material = new THREE.MeshBasicMaterial( { color: 0xffffff, specular: 0x000000} ); 
+
+    const textureLoader = new THREE.TextureLoader();
+    const texture = textureLoader.load( 'tp2_texture_planete.jpg' );
+
+    texture.minFilter = THREE.LinearFilter;
+    
+    const material = new THREE.MeshBasicMaterial( { map: texture, specular: 0x000000} ); 
+
     earth = new THREE.Mesh( geometry, material );
     earth.position.x = 1;
     scene.add( earth );
@@ -216,6 +223,13 @@ function init() {
         canvas = document.getElementById("canvas");
         renderer = new THREE.WebGLRenderer({canvas: canvas, antialias: true});
         renderer.setSize( canvas.clientWidth, canvas.clientHeight );
+
+        const textureLoader = new THREE.TextureLoader();
+        const texture = textureLoader.load( 'tp2_texture_planete.jpg' );
+
+        texture.minFilter = THREE.LinearFilter;
+
+        const material = new THREE.MeshBasicMaterial( { map: texture } );
     }
     catch (e) {
         document.getElementById("canvas-holder").innerHTML="<p><b>Sorry, an error occurred:<br>" +
