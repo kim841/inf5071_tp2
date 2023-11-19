@@ -27,7 +27,7 @@ let directionalLight
 
 const planetRadius = {
     earth: 0.05,
-    sun: 0.09,
+    sun: 0.08,
 }
 
 const orbitRadius = {
@@ -60,7 +60,7 @@ function createScene() {
     scene.add(earth);
     
     const coordL2 = cartisianCoordinates(0.5, degresToRadians(0), {x:1, y:0, z:0})
-    L2 = draw_pyramid(color.vert, 0.1, {x:coordL2.x, y:coordL2.y, z:coordL2.z});
+    L2 = draw_pyramid(color.vert, 0.04, {x:coordL2.x, y:coordL2.y, z:coordL2.z});
     scene.add(L2);
     
     orbitSatteliteJamesWebb = draw_orbit((1/8.0)*orbitRadius.earthAroundSun, color.vertFonce);
@@ -93,21 +93,21 @@ function createScene() {
     scene.add(directionalLight)
 
     // TODO: Dessiner les points de Lagrange et l'orbite L2
-    scene.add(draw_orbit(orbitRadius.othersAroundSun, color.blanc));
+    // scene.add(draw_orbit(orbitRadius.othersAroundSun, color.blanc)); //outer orbit
     const coordL1 = cartisianCoordinates(-0.5, degresToRadians(0), {x:1, y:0, z:0})
-    L1 = draw_pyramid(color.rouge, 0.1, {x:coordL1.x, y:coordL1.y, z:coordL1.z});
+    L1 = draw_pyramid(color.rouge, 0.03, {x:coordL1.x, y:coordL1.y, z:coordL1.z});
     scene.add(L1);
     
     const coordL3 = cartisianCoordinates(2, degresToRadians(180), {x:1, y:0, z:0})
-    L3 = draw_pyramid(color.bleu, 0.1, {x: coordL3.x, y:coordL3.y, z:coordL3.z});
+    L3 = draw_pyramid(color.bleu, 0.035, {x: coordL3.x, y:coordL3.y, z:coordL3.z});
     scene.add(L3);
 
     const coordL4 = cartisianCoordinates(1, degresToRadians(60), {x:0, y:0, z:0})
-    L4 = draw_pyramid(color.jaune, 0.1, {x: coordL4.x, y:coordL4.y, z:coordL4.z});
+    L4 = draw_pyramid(color.jaune, 0.035, {x: coordL4.x, y:coordL4.y, z:coordL4.z});
     scene.add(L4);
 
     const coordL5 = cartisianCoordinates(1, degresToRadians(-60), {x:0, y:0, z:0})
-    L5 = draw_pyramid(color.cyan, 0.1, {x:coordL5.x, y:coordL5.y, z:coordL5.z});
+    L5 = draw_pyramid(color.cyan, 0.035, {x:coordL5.x, y:coordL5.y, z:coordL5.z});
     scene.add(L5);
 
 
@@ -123,8 +123,8 @@ function createScene() {
     // Créer une caméra
     camera = new THREE.PerspectiveCamera(45, canvas.width/canvas.height, 0.1, 100);
     camera.position.x = 2;
-    camera.position.y = 2;
-    camera.position.z = 1; //déplacer la caméra pour voir la scène position.z initial = 1
+    camera.position.y = 1;
+    camera.position.z = 2; //déplacer la caméra pour voir la scène position.z initial = 1
     camera.lookAt(0,0,0);
     scene.add(camera);
 
@@ -170,11 +170,9 @@ function draw_pyramid(color, scale, position) {
     const geometry = new THREE.BufferGeometry();
     geometry.setIndex( pyramidIFS.indicesOfFaces );
     geometry.setAttribute( 'position', new THREE.BufferAttribute( pyramidIFS.vertices, 3 ) );
-    // const material = new THREE.MeshBasicMaterial( { color: color, emissive: color } );
-
     const material = new THREE.MeshStandardMaterial( { color: color, emissive: color } );
+    
     pyramid = new THREE.Mesh( geometry, material );
-
     pyramid.scale.set(scale,scale,scale);
     pyramid.position.set(position.x, position.y, position.z);
 
@@ -222,7 +220,7 @@ function draw_stars() {
 function draw_orbit(radius, color){
     let orbit = null;
     // TODO: dessiner l'orbite de la planète
-    const geometry = new THREE.RingGeometry( radius, radius + 0.01, 100 ); 
+    const geometry = new THREE.RingGeometry( radius, radius + 0.005, 100 ); 
     const material = new THREE.MeshBasicMaterial( { color: color, side: THREE.DoubleSide } );
     orbit = new THREE.Mesh( geometry, material ); 
     return orbit
@@ -261,10 +259,10 @@ function animate() {
         // orbitAngle1 += 0.01;
         // orbitAngle2 += 0.005;
 
-        // earth.rotation.z += 0.001; 
-        // earth.rotation.x += 0.001;  
-        // orbitSatteliteJamesWebb.rotation.z  += 0.003;     
-        // sun.rotation.z += 0.001;
+        earth.rotation.z += 0.001; 
+        earth.rotation.x += 0.001;  
+        orbitSatteliteJamesWebb.rotation.z  += 0.003;     
+        sun.rotation.z += 0.001;
     }
     
     last_render = Date.now();
