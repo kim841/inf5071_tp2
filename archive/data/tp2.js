@@ -4,6 +4,9 @@ import { ArcballControls } from 'three/addons/controls/ArcballControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js';
 
+// Chrome
+// Kim Trinh (TRIK67540106)
+// Miliya Ai (AIXM70600104)
 let scene, camera, renderer;  // Bases pour le rendu Three.js
 let controls; // Pour l'interaction avec la souris
 let canvas;  // Le canevas où est dessinée la scène
