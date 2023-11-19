@@ -170,7 +170,9 @@ function draw_pyramid(color, scale, position) {
     const geometry = new THREE.BufferGeometry();
     geometry.setIndex( pyramidIFS.indicesOfFaces );
     geometry.setAttribute( 'position', new THREE.BufferAttribute( pyramidIFS.vertices, 3 ) );
-    const material = new THREE.MeshBasicMaterial( { color: color } );
+    // const material = new THREE.MeshBasicMaterial( { color: color, emissive: color } );
+
+    const material = new THREE.MeshStandardMaterial( { color: color, emissive: color } );
     pyramid = new THREE.Mesh( geometry, material );
 
     pyramid.scale.set(scale,scale,scale);
